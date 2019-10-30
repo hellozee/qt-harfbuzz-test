@@ -14,10 +14,10 @@ public:
     void setProperties(PropertyHolder p);
 
 private:
-    QGlyphRun glyph;
-    qreal margin, scale, displacement;
-    QRawFont font;
-    bool propertiesSet;
+    QGlyphRun m_glyphRun;
+    qreal m_margin, m_scale, m_displacement;
+    QRawFont m_font;
+    bool m_propertiesSet;
 };
 
 #endif // PAINTWIDGET_H

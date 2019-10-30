@@ -6,8 +6,8 @@
 
 HBWrapper::~HBWrapper()
 {
-    hb_buffer_destroy(buffer);
-    hb_font_destroy(font);
+    hb_buffer_destroy(m_buffer);
+    hb_font_destroy(m_font);
 }
 
 void HBWrapper::setFont(QString location)
@@ -16,27 +16,26 @@ void HBWrapper::setFont(QString location)
     hb_face_t *face = hb_face_create(blob, 0);
     hb_blob_destroy(blob);
 
-    font = hb_font_create(face);
-    hb_ot_font_set_funcs(font);
-    hb_font_set_scale(font, FONT_SIZE*FONT_SCALE, FONT_SIZE*FONT_SCALE);
+    m_font = hb_font_create(face);
+    hb_ot_font_set_funcs(m_font);
+    hb_font_set_scale(m_font, FONT_SIZE*FONT_SCALE, FONT_SIZE*FONT_SCALE);
 
-    QRawFont rawFont(location, FONT_SIZE);
-    qDebug() << location;
+    m_rawFont =  QRawFont(location, FONT_SIZE);
 }
 
 void HBWrapper::setText(QString text)
 {
-    buffer = hb_buffer_create ();
-    hb_buffer_add_utf8 (buffer, text.toStdString().c_str(), -1, 0, -1);
-    hb_buffer_guess_segment_properties (buffer);
-    hb_shape (font, buffer, nullptr, 0);
+    m_buffer = hb_buffer_create ();
+    hb_buffer_add_utf8 (m_buffer, text.toUtf8().data(), text.toUtf8().size(), 0, -1);
+    hb_buffer_guess_segment_properties (m_buffer);
+    hb_shape (m_font, m_buffer, nullptr, 0);
 }
 
 PropertyHolder HBWrapper::calculate()
 {
-    unsigned int nGlyphs = hb_buffer_get_length(buffer);
-    hb_glyph_info_t *hbGlyphs = hb_buffer_get_glyph_infos(buffer, nullptr);
-    hb_glyph_position_t *hbPositions = hb_buffer_get_glyph_positions(buffer, nullptr);
+    unsigned int nGlyphs = hb_buffer_get_length(m_buffer);
+    hb_glyph_info_t *hbGlyphs = hb_buffer_get_glyph_infos(m_buffer, nullptr);
+    hb_glyph_position_t *hbPositions = hb_buffer_get_glyph_positions(m_buffer, nullptr);
 
     QVector<quint32> glyphIndexes(static_cast<int>(nGlyphs));
     QVector<QPointF> glyphPositions(static_cast<int>(nGlyphs));
@@ -51,12 +50,14 @@ PropertyHolder HBWrapper::calculate()
 
     QGlyphRun glyphRun = QGlyphRun();
 
-    glyphRun.setRawFont(rawFont);
+    Q_ASSERT(m_rawFont.isValid());
+
+    glyphRun.setRawFont(m_rawFont);
     glyphRun.setGlyphIndexes(glyphIndexes);
     glyphRun.setPositions(glyphPositions);
 
     PropertyHolder p;
-    p.font = rawFont;
+    p.font = m_rawFont;
     p.glyph = glyphRun;
     p.scale = FONT_SCALE;
     p.margin = MARGIN;

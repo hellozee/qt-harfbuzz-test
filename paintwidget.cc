@@ -2,27 +2,28 @@
 #include <QPainter>
 
 PaintWidget::PaintWidget(QWidget *parent):
-    QWidget(parent), propertiesSet(false)
+    QWidget(parent), m_propertiesSet(false)
 { }
 
 void PaintWidget::paintEvent(QPaintEvent *e)
 {
-    if(!propertiesSet){
+    if(!m_propertiesSet){
         QWidget::paintEvent(e);
         return;
     }
 
     QPainter painter(this);
-    painter.drawGlyphRun(QPointF(margin, font.ascent() + margin), glyph);
-    resize(displacement/scale + margin*2, font.ascent() + font.descent() + margin*2);
+    Q_ASSERT(m_font.isValid());
+    painter.drawGlyphRun(QPointF(m_margin, m_font.ascent() + m_margin), m_glyphRun);
+    resize(m_displacement/m_scale + m_margin*2, m_font.ascent() + m_font.descent() + m_margin*2);
 }
 
 void PaintWidget::setProperties(PropertyHolder p)
 {
-    glyph = p.glyph;
-    margin = p.margin;
-    scale = p.scale;
-    font = p.font;
-    displacement = p.displacement;
-    propertiesSet = true;
+    m_glyphRun = p.glyph;
+    m_margin = p.margin;
+    m_scale = p.scale;
+    m_font = p.font;
+    m_displacement = p.displacement;
+    m_propertiesSet = true;
 }

@@ -21,26 +21,26 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_fontChooser_clicked()
 {
-    fontLocation = QFileDialog::getOpenFileName(
+    m_fontLocation = QFileDialog::getOpenFileName(
                 this, ("Choose Font"),
                 QStandardPaths::standardLocations(QStandardPaths::FontsLocation)[1],
                 ("Fonts (*.ttf *.otf)"));
 
-    if(!fontLocation.isEmpty())
-        ui->fontChooser->setText(QFileInfo(fontLocation).fileName());
+    if(!m_fontLocation.isEmpty())
+        ui->fontChooser->setText(QFileInfo(m_fontLocation).fileName());
 
-    layoutEngine.setFont(fontLocation);
+    m_layoutEngine.setFont(m_fontLocation);
 }
 
 void MainWindow::on_updateText_clicked()
 {
     QString text = ui->textbox->text();
 
-    if(text.isEmpty() || fontLocation.isEmpty())
+    if(text.isEmpty() || m_fontLocation.isEmpty())
         return;
 
-    layoutEngine.setText(text);
+    m_layoutEngine.setText(text);
     PaintWidget *p = qobject_cast<PaintWidget *>(ui->canvas);
-    p->setProperties(layoutEngine.calculate());
+    p->setProperties(m_layoutEngine.calculate());
     p->update();
 }

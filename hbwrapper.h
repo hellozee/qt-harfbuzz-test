@@ -24,9 +24,9 @@ public:
     void setText(QString text);
     PropertyHolder calculate();
 private:
-    hb_font_t *font;
-    hb_buffer_t *buffer;
-    QRawFont rawFont;
+    hb_font_t *m_font;
+    hb_buffer_t *m_buffer;
+    QRawFont m_rawFont;
 };
 
 #endif // HBWRAPPER_H

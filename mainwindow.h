@@ -23,8 +23,8 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
-    HBWrapper layoutEngine;
-    QString fontLocation;
+    HBWrapper m_layoutEngine;
+    QString m_fontLocation;
 };
 
 #endif // MAINWINDOW_H
